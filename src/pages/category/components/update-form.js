@@ -9,9 +9,17 @@ class UpdateForm extends Component{
 	constructor(props) {
 	    super(props)
 	}
+	
 	static propTypes = {
-		updateFormData:PropTypes.string.isRequired
+		updateFormData:PropTypes.string.isRequired,
+		setForm:PropTypes.func.isRequired,
 	}
+	
+	componentWillMount(){
+		//将子组件的form通过setForm()方法传递给父组件
+		this.props.setForm(this.props.form)
+	}
+	
 	render(){
 		const {updateFormData} = this.props
 		const { getFieldDecorator } = this.props.form
