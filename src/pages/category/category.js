@@ -46,9 +46,9 @@ export default class Category extends Component{
 	}
 	
 	//异步获取一级/二级分类列表
-	getCategorys = async() => {
+	getCategorys = async(parameterId) => {
 		// this.setState({loading:true})
-		// const {categoryId} = this.state
+		// categoryId = parameterId || this.state.categoryId
 		// const result = await reqCategorys(categoryId)
 		// this.setState({loading:false})
 		// if(result.status == 0){
@@ -105,7 +105,7 @@ export default class Category extends Component{
 		this.setState({loading:true})
 		setTimeout(() => {
 			this.setState({
-				categoryId:'1',
+				categoryId:item._id,
 				categoryName:item.name,
 				subCategorys:categoryTwoSimulationDataArr
 			})
@@ -139,46 +139,78 @@ export default class Category extends Component{
 	
 	//添加分类确定事件
 	addCategory = () => {
-		
+		this.form.validateFields(async (err,values)=>{
+			if(!err){
+				this.setState({
+					showStatus:0
+				})
+				const {parentId,categoryName}=this.form.getFieldsValue()
+				this.form.resetFields()
+				const result = await reqAddCategory(parentId,categoryName)
+				if(result.status == 0){
+					if(parentId == this.state.categoryId){//添加的分类就是当前列表下的分类
+						this.getCategorys()
+					}else if(parentId == '0'){//在二级分类列表下添加一级分类,重新获取一级分类列表,但不显示
+						this.getCategorys('0')
+					}
+				}else{
+					message.error('添加分类列表数据失败')
+				}
+			}
+		})
 	}
 	
 	//更新分类确定事件
-	updateCategory = async() => {
-		this.setState({
-			showStatus:0
-		})
-		// //发请求更新分类
-		// const categoryId = this.updateCategoryData._id
-		// //修改的name通过setForm方法从子组件中的form获取
-		// const categoryName = this.form.getFieldValue('categoryName')
-		// //清除输入数据
-		// this.form.resetFields()
-		// const result = await reqUpdateCategory({categoryName,categoryId})
-		// if(result.status === 0){
-		// 	//重新显示列表
-		// 	this.getCategorys()
-		// }else{
-		// 	message.error('更新分类列表失败')
-		// }
-		
-		//更新自建模拟数据
-		const categoryId = this.updateCategoryData._id
-		const categoryName = this.form.getFieldValue('categoryName')
-		this.form.resetFields()
-		this.setState({loading:true})
-		categorySimulationData.forEach((item)=>{
-			if(item._id == categoryId){
-				item.name = categoryName
-				this.setState({loading:false})
-				return
+	updateCategory = () => {
+		this.form.validateFields(async (err,values)=>{
+			if(!err){
+				this.setState({
+					showStatus:0
+				})
+				// //发请求更新分类
+				// const categoryId = this.updateCategoryData._id
+				// //修改的name通过setForm方法从子组件中的form获取
+				// const categoryName = this.form.getFieldValue('categoryName')
+				// //清除输入数据
+				// this.form.resetFields()
+				// const result = await reqUpdateCategory({categoryName,categoryId})
+				// if(result.status === 0){
+				// 	//重新显示列表
+				// 	this.getCategorys()
+				// }else{
+				// 	message.error('更新分类列表失败')
+				// }
+				
+				//更新自建模拟数据
+				const categoryId = this.updateCategoryData._id
+				const categoryName = this.form.getFieldValue('categoryName')
+				this.form.resetFields()
+				this.setState({loading:true})
+				if(this.updateCategoryData.parentId == '0'){
+					categorySimulationData.forEach((item)=>{
+						if(item._id == categoryId){
+							item.name = categoryName
+							this.setState({loading:false})
+							return
+						}
+					})
+				}else{
+					categoryTwoSimulationData.forEach((item)=>{
+						if(item._id == categoryId){
+							item.name = categoryName
+							this.setState({loading:false})
+							return
+						}
+					})
+				}
+				// setTimeout(() => {
+				// 	this.setState({loading:false})
+				// 	this.setState({
+				// 		categorys:categorySimulationData
+				// 	})			
+				// },3000)
 			}
 		})
-		// setTimeout(() => {
-		// 	this.setState({loading:false})
-		// 	this.setState({
-		// 		categorys:categorySimulationData
-		// 	})			
-		// },3000)
 	}
 	
 	//第一次执行的生命周期
@@ -226,7 +258,7 @@ export default class Category extends Component{
 				okText="确认"
 				cancelText="取消"
 			>
-			    <WrappedNormalAddForm />
+			    <WrappedNormalAddForm categorys={categorys} parentId={categoryId} setForm={(form)=>{this.form=form}}/>
 			</Modal>
 							  
 			<Modal

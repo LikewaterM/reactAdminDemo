@@ -25,9 +25,12 @@ class UpdateForm extends Component{
 		const { getFieldDecorator } = this.props.form
 		return(
 		  <Form>
-			<Item>
+			<Item label="分类名称:">
 			{getFieldDecorator('categoryName',{
-				initialValue:updateFormData
+				initialValue:updateFormData,
+				rules:[
+					{required:true,message:'分类名称必填'}
+				]
 			})(
 			  <Input placeholder='请输入分类名称'/>
 			)} 
