@@ -4,6 +4,7 @@ import { Layout } from 'antd'
 import memoryUtils from '../../utils/memoryUtils'
 import LeftNav from '../../components/left-nav/leftNav.js'
 import Header from '../../components/header/header.js'
+import './admin.less'
 
 import Home from '../home/home'
 import Category from '../category/category'
@@ -29,7 +30,7 @@ export default class Admin extends Component{
 		return(
 		   <Layout style={{height:'100%'}}>
 			 <Sider>
-			   <LeftNav/>
+			   <LeftNav />
 			 </Sider>
 			 <Layout style={{backgroundColor:'#F0F2F5'}}>
 			   <Header></Header>
