@@ -24,3 +24,6 @@ export const reqUpdateCategory = ({categoryName,categoryId}) => ajax(base + '/ma
 
 //获取商品分页列表
 export const reqProducts = ({pageNum,pageSize}) => ajax(base + '/manage/product/list',{pageNum,pageSize})
+
+//获取搜索商品分页列表
+export const reqSearchProducts = ({pageNum,pageSize,searchName,searchType}) => ajax(base + '/manage/product/search',{pageNum,pageSize,[searchType]:searchName})

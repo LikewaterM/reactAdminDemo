@@ -34,7 +34,7 @@ export default class Admin extends Component{
 			 </Sider>
 			 <Layout style={{backgroundColor:'#F0F2F5'}}>
 			   <Header></Header>
-			   <Content style={{backgroundColor:'#fff',margin:20,marginBottom:10}}>
+			   <Content style={{backgroundColor:'#fff',margin:20,marginBottom:10,height:'100%'}}>
 			     <Switch>
 				   <Route path='/home' component={Home}></Route>
 				   <Route path='/category' component={Category}></Route>
@@ -47,7 +47,10 @@ export default class Admin extends Component{
 				   <Redirect to='/home' />
 				 </Switch>
 			   </Content>
-			   <Footer style={{textAlign:'center',color:'#ccc'}}>推荐使用谷歌浏览器,可以获得更佳页面操作体验</Footer>
+			   <Footer style={{textAlign:'center',color:'#ccc'}}>,
+			     <p style={{marginBottom:0}}>Copyright © 2020 Red Devils. All Rights Reserved</p>
+				 <div>红魔技术</div>
+			   </Footer>
 			 </Layout>
 		   </Layout>
 		)

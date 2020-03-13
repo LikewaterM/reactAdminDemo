@@ -4,6 +4,7 @@ import {Switch,Route,Redirect} from 'react-router-dom'
 import ProductHome from './subrouter/home.js'
 import ProductAddUpdate from './subrouter/add-update.js'
 import ProductDetail from './subrouter/detail.js'
+import './product.less'
 
 /*商品路由*/
 export default class Product extends Component{
