@@ -25,13 +25,15 @@ export function productHomeColumns(props){
 	  		title: '状态',
 	  		width:100,
 	  		dataIndex: 'status',
-	  		render:(status)=>{
+	  		render:(item)=>{
+				const {status,_id} = item
+				const newStatus = status == 1 ? 2:1
 	  			return (
 	  			  <span>
-	  			    <Button type="primary">
-	  			    	下架
+	  			    <Button type="primary" onClick={()=>this.updateStatus(_id,newStatus)}>
+	  			    	{status == 1 ? '下架':'上架'}
 	  			    </Button>
-	  				<span>在售</span>
+	  				<span>{status == 1 ? '在售':'已下架'}</span>
 	  			  </span>
 	  			)
 	  		}

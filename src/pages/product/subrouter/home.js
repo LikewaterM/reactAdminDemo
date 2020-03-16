@@ -1,7 +1,7 @@
 import React,{Component} from 'react'
-import {Card,Select,Input,Button,Icon,Table} from 'antd'
+import {Card,Select,Input,Button,Icon,Table,message} from 'antd'
 import {productHomeData} from '../../../api/productDatas/productHomeData.js'
-import {reqProducts,reqSearchProducts} from '../../../api/api.js'
+import {reqProducts,reqSearchProducts,reqUpdateStatus} from '../../../api/api.js'
 import {PAGE_SIZE} from '../../../utils/contents.js'
 import {productHomeColumns} from '../columns/productHomeColumns.js'
 
@@ -23,7 +23,9 @@ export default class ProductHome extends Component{
 	// 	this.columns = 
 	// }
 	
+	//获取商品列表
 	getProducts = async (pageNum) => {
+		// this.pageNum = pageNum    //保存当前页码,让其他方法都看的见
 		// this.setState({loading:true})
 		// const {searchName,searchType} = this.state
 		// let result
@@ -69,6 +71,15 @@ export default class ProductHome extends Component{
 		},3000)
 	}
 	
+	//更新指定商品状态
+	updateStatus = async (id,status) => {
+		const result = await reqUpdateStatus(id,status)
+		if(result.status == 0){
+			message.success('更新商品状态成功')
+			this.getProducts(this.pageNum)//更新数据列表
+		}
+	}
+	
 	componentWillMount(){
 		this.columns = productHomeColumns(this.props)
 	}
@@ -101,7 +112,7 @@ export default class ProductHome extends Component{
 		  </span>
 		)
 		const extra = (
-		  <Button type="primary" icon="plus">
+		  <Button type="primary" icon="plus" onClick={()=>this.props.history.push('/product/addUpdate')}>
 			添加商品
 		  </Button>
 		)

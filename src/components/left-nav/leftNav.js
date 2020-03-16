@@ -62,7 +62,7 @@ class LeftNav extends Component{
 				  </Menu.Item>
 				))
 			}else{
-				const openPath = item.children.filter(cItem => cItem.key == path)
+				const openPath = item.children.filter(cItem => path.indexOf(cItem.key)==0)
 				if(openPath.length != 0){
 					this.openPathKey = item.key
 				}
@@ -91,7 +91,10 @@ class LeftNav extends Component{
 	
 	render(){
 		//得到当前请求的路由路径
-		const path = this.props.location.pathname
+		let path = this.props.location.pathname
+		if(path.indexOf('/product')===0){
+			path = '/product'
+		}
 		const openPath = this.openPathKey
 		return(
 		  <div className='left-nav'>
