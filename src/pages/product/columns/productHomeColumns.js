@@ -45,7 +45,7 @@ export function productHomeColumns(props){
 	  			return (
 	  			  <span>
 	  				<LinkButton onClick={()=>props.history.push('/product/detail',item)}>详情</LinkButton>
-	  				<LinkButton>修改</LinkButton>
+	  				<LinkButton onClick={()=>props.history.push('/product/addUpdate',item)}>修改</LinkButton>
 	  			  </span>
 	  			)
 	  		}

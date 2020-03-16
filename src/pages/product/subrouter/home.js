@@ -19,10 +19,6 @@ export default class ProductHome extends Component{
 		}
 	}
 	
-	// getProductHomeColumns = () => {
-	// 	this.columns = 
-	// }
-	
 	//获取商品列表
 	getProducts = async (pageNum) => {
 		// this.pageNum = pageNum    //保存当前页码,让其他方法都看的见
