@@ -1,10 +1,11 @@
 import React,{Component} from 'react'
-import {Card,Form,Input,Upload,Cascader,Button,Icon} from 'antd'
+import {Card,Form,Input,Upload,Cascader,Button,Icon,message} from 'antd'
 import LinkButton from '../../../components/link-button/linkButton.js'
-import {reqCategorys} from '../../../api/api.js'
+import {reqCategorys,reqAddOrUpdateProduct} from '../../../api/api.js'
 import {categorySimulationData} from '../../../api/simulationDatas/categorySimulationData.js'
 import {categoryTwoSimulationData} from '../../../api/simulationDatas/categoryTwoSimulationData.js'
 import PicturesWall from './pictures-will.js'
+import RichTextEditor from './richTextEditor.js'
 
 const Item = Form.Item
 const {TextArea} = Input
@@ -15,6 +16,10 @@ class ProductAddUpdate extends Component{
 		this.state = {
 			options:[],
 		}
+		
+		//创建用来保存ref标识的标签对象的容器
+		this.myRef = React.createRef()//图片上传
+		this.editor = React.createRef()//富文本编辑器
 	}
 	//商品价格验证
 	validatorPrice = (rule, value, callback) => {
@@ -103,9 +108,35 @@ class ProductAddUpdate extends Component{
 	
 	//表单提交
 	submit = () => {
-		this.props.form.validateFields((err,val)=>{
+		this.props.form.validateFields(async (err,val)=>{
 			if(!err){
-				alert('提交表单成功')
+				//收集数据
+				const {name,desc,price,categoryIds} = val
+				let pCategoryId,categoryId
+				if(categoryIds.length == 1){
+					pCategoryId = '0'
+					categoryId = categoryIds[0]
+				}else{
+					pCategoryId = categoryIds[0]
+					categoryId = categoryIds[1]
+				}
+				//提交时,获取子组件的图片name
+				const imgs = this.myRef.current.getImgs
+				//提交时,获取子组件的富文本内容
+				const editors = this.editor.current.getDetail
+				const product = {name,desc,price,pCategoryId,categoryId,imgs,editors}
+				if(this.isUpdate){
+					product._id = this.updateData._id
+				}
+				//调用接口请求函数添加或修改
+				const result = await reqAddOrUpdateProduct(product)
+				//根据结果提示
+				if(result.status == 0){
+					message.success(`${this.isUpdate?'修改':'添加'}商品成功`)
+					this.props.history.goBack()
+				}else{
+					message.error(`${this.isUpdate?'修改':'添加'}商品失败`)
+				}
 			}
 		})
 	}
@@ -141,6 +172,10 @@ class ProductAddUpdate extends Component{
 		const formItemLayout = {
 		  labelCol: { span: 3 },
 		  wrapperCol: { span: 8 },
+		}
+		const tailFormItemLayout = {
+			labelCol: { span: 3 },
+			wrapperCol: { span: 19 },
 		}
 		return(
 		  <Card title={title}>
@@ -185,11 +220,11 @@ class ProductAddUpdate extends Component{
 				)}
 			    
 			  </Item>
-			  <Item label='商品图片'>
-			    <PicturesWall />
+			  <Item label='商品图片' {...tailFormItemLayout}>
+			    <PicturesWall ref={this.myRef} imgs={updateData.imgs}/>
 			  </Item>
-			  <Item label='商品详情'>
-			    <div>商品详情</div>
+			  <Item label='商品详情' {...tailFormItemLayout} className='add-update-details'>
+			    <RichTextEditor ref={this.editor} detail={updateData.detail} />
 			  </Item>
 			  <Item>
 			    <Button type='primary' onClick={this.submit}>提交</Button>
@@ -202,3 +237,9 @@ class ProductAddUpdate extends Component{
 
 const ProductAddUpdateForm = Form.create()(ProductAddUpdate)
 export default ProductAddUpdateForm
+
+/*
+父组件读取子组件的数据方法:
+1.子组件调用父组件的方法:将父组件的方法以函数属性的形式传递给子组件,子组件就可以调用
+2.父组件调用子组件的方法:在父组件中通过ref得到子组件标签对象,调用其方法
+*/

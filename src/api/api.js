@@ -33,3 +33,12 @@ export const reqCategory = (categoryId) => ajax(base + '/manage/category/info',{
 
 //更新商品的状态
 export const reqUpdateStatus = (productId,status) => ajax(base + '/manage/product/updateStatus',{productId,status},'POST')
+
+//删除图片
+export const reqDeleteImg = (img) => ajax(base + '/manage/img/delete',{img},'POST')
+
+//添加或修改商品
+export const reqAddOrUpdateProduct = (product) => ajax(base + '/manage/product/'+(product._id?'update':'add'),product,'POST')
+
+//获取角色列表
+export const reqRoles = () => ajax(base + '/manage/role/list')

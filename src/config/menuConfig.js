@@ -6,7 +6,7 @@ const menuList = [
 	},
 	{
 		title:'商品',
-		key:'/product',
+		key:'/products',
 		icon:'appstore',
 		children:[
 			{

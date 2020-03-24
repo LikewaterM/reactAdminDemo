@@ -27,7 +27,7 @@ class Header extends Component{
 	
 	//获取当前页面title
 	getTitle = () => {
-		const path =this.props.location.pathname
+		const path = this.props.location.pathname
 		let title
 		menuList.forEach((item) => {
 			if(!item.children){
@@ -36,7 +36,7 @@ class Header extends Component{
 				}
 			}else{
 				item.children.forEach((cItem) => {
-					if(cItem.key === path){
+					if(cItem.key === path || path.indexOf(cItem.key) != -1){
 						title = cItem.title
 					}
 				})
