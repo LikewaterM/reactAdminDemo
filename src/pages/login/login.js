@@ -13,7 +13,7 @@ class Login extends Component{
 		event.preventDefault()
 		const form = this.props.form
 		const values = form.getFieldsValue()
-		console.log('输出值是:',values)
+		// console.log('输出值是:',values)
 		form.validateFields(async (err, values) => {
 		  if (!err) {
 							// reqLogin(values.username,values.password).then(response => {

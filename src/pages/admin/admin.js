@@ -4,6 +4,7 @@ import { Layout } from 'antd'
 import memoryUtils from '../../utils/memoryUtils'
 import LeftNav from '../../components/left-nav/leftNav.js'
 import Header from '../../components/header/header.js'
+import './admin.less'
 
 import Home from '../home/home'
 import Category from '../category/category'
@@ -27,13 +28,13 @@ export default class Admin extends Component{
 			return <Redirect to = '/login' />
 		}
 		return(
-		   <Layout style={{height:'100%'}}>
+		   <Layout style={{minHeight:'100%'}}>
 			 <Sider>
-			   <LeftNav/>
+			   <LeftNav />
 			 </Sider>
-			 <Layout style={{backgroundColor:'#E0E0E0'}}>
+			 <Layout style={{backgroundColor:'#F0F2F5'}}>
 			   <Header></Header>
-			   <Content style={{backgroundColor:'#fff',margin:20,marginBottom:10}}>
+			   <Content style={{backgroundColor:'#fff',margin:20,marginBottom:10,height:'100%'}}>
 			     <Switch>
 				   <Route path='/home' component={Home}></Route>
 				   <Route path='/category' component={Category}></Route>
@@ -46,7 +47,10 @@ export default class Admin extends Component{
 				   <Redirect to='/home' />
 				 </Switch>
 			   </Content>
-			   <Footer style={{textAlign:'center',color:'#ccc'}}>推荐使用谷歌浏览器,可以获得更佳页面操作体验</Footer>
+			   <Footer style={{textAlign:'center',color:'#ccc'}}>,
+			     <p style={{marginBottom:0}}>Copyright © 2020 Red Devils. All Rights Reserved</p>
+				 <div>红魔技术</div>
+			   </Footer>
 			 </Layout>
 		   </Layout>
 		)
