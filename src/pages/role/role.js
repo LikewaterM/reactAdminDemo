@@ -4,6 +4,7 @@ import {roleData} from '../../api/roleDatas/roleData.js'
 import {PAGE_SIZE} from '../../utils/contents.js'
 import {reqRoles,reqAddRole} from '../../api/api.js'
 import WrappedNormalAddForm from './components/add-form.js'
+import UpdateForm from './components/update-form.js'
 
 /*角色管理路由*/
 export default class Role extends Component{
@@ -12,7 +13,8 @@ export default class Role extends Component{
 		loading:false,
 		role:{},//选中行的数据
 		radioChange:[],//选中单选框的数据
-		isAddRole:false
+		isAddRole:false,
+		isUpdateRole:false,
 	}
 	
 	initColumns = () => {
@@ -68,13 +70,19 @@ export default class Role extends Component{
 	selectChange = (index,item) => {
 		this.setState({
 			radioChange:index,
-			role:{}
+			role:item[0]
 		})
 	}
 	
 	establishRole = () => {
 		this.setState({
 			isAddRole:true
+		})
+	}
+	
+	setAuthRole = () => {
+		this.setState({
+			isUpdateRole:true
 		})
 	}
 	
@@ -98,6 +106,10 @@ export default class Role extends Component{
 		})
 	}
 	
+	updateRole = () => {
+		
+	}
+	
 	componentWillMount(){
 		this.initColumns()
 	}
@@ -107,12 +119,13 @@ export default class Role extends Component{
 	}
 	
 	render(){
-		const {roles,loading,role,radioChange,isAddRole} = this.state
+		const {roles,loading,role,radioChange,isAddRole,isUpdateRole} = this.state
+		console.log(role,'role')
 		let key = radioChange.length==0?role._id:radioChange[0]
 		const title = (
 		  <span>
 		    <Button type="primary" style={{marginRight:10}} onClick={this.establishRole}>创建角色</Button>
-			<Button type="primary" disabled={!role._id}>设置角色权限</Button>
+			<Button type="primary" disabled={!key} onClick={this.setAuthRole}>设置角色权限</Button>
 		  </span>
 		)
 		return(
@@ -136,6 +149,16 @@ export default class Role extends Component{
 				cancelText="取消"
 			>
 			    <WrappedNormalAddForm setForm={(form)=>{this.form=form}}/>
+			</Modal>
+			<Modal
+				title="设置角色权限"
+				visible={isUpdateRole}
+				onOk={this.updateRole}
+				onCancel={()=>this.setState({isUpdateRole:false})}
+				okText="确认"
+				cancelText="取消"
+			>
+			    <UpdateForm role={role}/>
 			</Modal>
 		  </Card>
 		)
