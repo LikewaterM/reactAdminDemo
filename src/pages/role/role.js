@@ -1,14 +1,18 @@
 import React,{Component} from 'react'
-import {Card,Button,Table,message} from 'antd'
+import {Card,Button,Table,message,Modal} from 'antd'
 import {roleData} from '../../api/roleDatas/roleData.js'
 import {PAGE_SIZE} from '../../utils/contents.js'
-import {reqRoles} from '../../api/api.js'
+import {reqRoles,reqAddRole} from '../../api/api.js'
+import WrappedNormalAddForm from './components/add-form.js'
 
 /*角色管理路由*/
 export default class Role extends Component{
 	state = {
 		roles:roleData || [],
 		loading:false,
+		role:{},//选中行的数据
+		radioChange:[],//选中单选框的数据
+		isAddRole:false
 	}
 	
 	initColumns = () => {
@@ -49,13 +53,49 @@ export default class Role extends Component{
 	onRow = (recode) => {
 		return {
 		  onClick: event => {// 点击行
-			  console.log(recode,'recode')
+			  this.setState({
+				  role:recode,
+				  radioChange:[]
+			  })
 		  }, 
 		  // onDoubleClick: event => {},
 		  // onContextMenu: event => {},
 		  // onMouseEnter: event => {}, // 鼠标移入行
 		  // onMouseLeave: event => {},
 		}
+	}
+	
+	selectChange = (index,item) => {
+		this.setState({
+			radioChange:index,
+			role:{}
+		})
+	}
+	
+	establishRole = () => {
+		this.setState({
+			isAddRole:true
+		})
+	}
+	
+	addRole = () => {
+		this.form.validateFields(async (err,values)=>{
+			if(!err){
+				const {roleName} = values
+				this.form.resetFields()
+				this.setState({isAddRole:false})
+				const result = await reqAddRole(roleName)
+				if(result.status == 0){
+					message.success('添加角色成功')
+					//将新增的角色添加到角色列表里
+					this.setState(state=>({
+						roles:[...state.roles,result.data]
+					}))
+				}else{
+					message.error('添加角色失败')
+				}
+			}
+		})
 	}
 	
 	componentWillMount(){
@@ -67,11 +107,12 @@ export default class Role extends Component{
 	}
 	
 	render(){
-		const {roles,loading} = this.state
+		const {roles,loading,role,radioChange,isAddRole} = this.state
+		let key = radioChange.length==0?role._id:radioChange[0]
 		const title = (
 		  <span>
-		    <Button type="primary" style={{marginRight:10}}>创建角色</Button>
-			<Button type="primary" disabled>设置角色权限</Button>
+		    <Button type="primary" style={{marginRight:10}} onClick={this.establishRole}>创建角色</Button>
+			<Button type="primary" disabled={!role._id}>设置角色权限</Button>
 		  </span>
 		)
 		return(
@@ -83,9 +124,19 @@ export default class Role extends Component{
 		       bordered
 		       rowKey='_id'
 		       pagination={{defaultPageSize:PAGE_SIZE,showQuickJumper:true}}
-			   rowSelection={{type:'radio'}}
+			   rowSelection={{type:'radio',selectedRowKeys:[key],onChange:this.selectChange}}
 			   onRow={this.onRow}
 		    />
+			<Modal
+				title="创建角色"
+				visible={isAddRole}
+				onOk={this.addRole}
+				onCancel={()=>this.setState({isAddRole:false})}
+				okText="确认"
+				cancelText="取消"
+			>
+			    <WrappedNormalAddForm setForm={(form)=>{this.form=form}}/>
+			</Modal>
 		  </Card>
 		)
 	}
