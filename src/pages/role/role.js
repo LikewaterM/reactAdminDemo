@@ -2,19 +2,25 @@ import React,{Component} from 'react'
 import {Card,Button,Table,message,Modal} from 'antd'
 import {roleData} from '../../api/roleDatas/roleData.js'
 import {PAGE_SIZE} from '../../utils/contents.js'
-import {reqRoles,reqAddRole} from '../../api/api.js'
+import {reqRoles,reqAddRole,reqUpdateRole} from '../../api/api.js'
 import WrappedNormalAddForm from './components/add-form.js'
 import UpdateForm from './components/update-form.js'
+import memoryUtils from '../../utils/memoryUtils.js'
+import {formateDate} from '../../utils/dateUtils.js'
 
 /*角色管理路由*/
 export default class Role extends Component{
-	state = {
-		roles:roleData || [],
-		loading:false,
-		role:{},//选中行的数据
-		radioChange:[],//选中单选框的数据
-		isAddRole:false,
-		isUpdateRole:false,
+	constructor(props){
+		super(props)
+		this.state = {
+			roles:roleData || [],
+			loading:false,
+			role:{},//选中行的数据
+			radioChange:[],//选中单选框的数据
+			isAddRole:false,
+			isUpdateRole:false,
+		}
+		this.auth = React.createRef()
 	}
 	
 	initColumns = () => {
@@ -28,11 +34,13 @@ export default class Role extends Component{
 				title: '创建时间',
 				dataIndex: 'create_time',
 				key: 'create_time',
+				render:(create_time)=>formateDate(create_time)
 			},
 			{
 				title: '授权时间',
 				dataIndex: 'auth_time',
 				key: 'auth_time',
+				render:formateDate
 			},
 			{
 				title: '授权人',
@@ -43,13 +51,13 @@ export default class Role extends Component{
 	}
 	
 	getRoles = async () => {
-		const result = await reqRoles()
-		if(result.status == 0){
-			const roles = result.data
-			this.setState({roles})
-		}else{
-			message.error('获取角色数据失败')
-		}
+		// const result = await reqRoles()
+		// if(result.status == 0){
+		// 	const roles = result.data
+		// 	this.setState({roles})
+		// }else{
+		// 	message.error('获取角色数据失败')
+		// }
 	}
 	
 	onRow = (recode) => {
@@ -106,8 +114,22 @@ export default class Role extends Component{
 		})
 	}
 	
-	updateRole = () => {
-		
+	updateRole = async () => {
+		this.setState({isUpdateRole:false})
+		const {role} = this.state
+		const menus = this.auth.current.getMenuLists()
+		role.menus = menus
+		role.auth_name = memoryUtils.user.username
+		role.auth_time = Date.now()
+		const result = await reqUpdateRole(role)
+		if(result.state == 0){
+			message.success('更新角色权限成功')
+			this.setState({
+				roles:[...this.state.roles]
+			})
+		}else{
+			message.error('更新角色权限失败')
+		}
 	}
 	
 	componentWillMount(){
@@ -158,7 +180,7 @@ export default class Role extends Component{
 				okText="确认"
 				cancelText="取消"
 			>
-			    <UpdateForm role={role}/>
+			    <UpdateForm ref={this.auth} role={role}/>
 			</Modal>
 		  </Card>
 		)
